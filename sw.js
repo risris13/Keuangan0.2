@@ -1,6 +1,10 @@
-var CACHE="catatan-keuangan-v1";
-var FILES=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/icon-maskable-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","icons/logo.png"];
-self.addEventListener("install",function(e){e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES)}).then(function(){return self.skipWaiting()}))});
+var CACHE="catatan-keuangan-v2";
+var FILES=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png","icon-maskable-512.png","apple-touch-icon.png","favicon-32.png","logo.png"];
+self.addEventListener("install",function(e){
+ e.waitUntil(caches.open(CACHE).then(function(c){
+  return Promise.all(FILES.map(function(f){return c.add(f).catch(function(){})}));
+ }).then(function(){return self.skipWaiting()}));
+});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==CACHE}).map(function(x){return caches.delete(x)}))}).then(function(){return self.clients.claim()}))});
 self.addEventListener("fetch",function(e){
  var r=e.request;if(r.method!=="GET")return;
